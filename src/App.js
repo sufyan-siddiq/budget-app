@@ -1,24 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container, Stack } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Header } from './components/Header/Header';
+import { BudgetCard } from './components/BudgetCard/BudgetCard';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container className='my-4'>
+      <Header />
+      <BudgetCard name={"Entertainment"} amount={200} max={1000} gray />
+    </Container>
   );
 }
 
