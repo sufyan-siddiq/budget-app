@@ -1,0 +1,12 @@
+.recharts-wrapper>svg>g {
+    outline: none !important;
+
+}
+ .recharts-layer .recharts-pie-sector :focus{
+    outline: none !important;
+
+}
+/* g&:focus,
+path&:focus {
+  outline: none !important;
+} */
