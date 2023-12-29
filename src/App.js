@@ -1,21 +1,30 @@
-import { Button, Container, Stack } from 'react-bootstrap';
+import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Header } from './components/Header/Header';
+import { Button, Container, Stack } from 'react-bootstrap';
 import { BudgetCard } from './components/BudgetCard/BudgetCard';
 import { AddExpenseModel } from './components/AddExpenseModel/AddExpenseModel';
 import { AddBudgetModal } from './components/AddBudgetModel/AddBudgetModel';
-import { useState } from 'react';
-import { useBudget } from './context/BudgetContext';
+import { UNCATEGORIZED_BUDGET_ID, useBudget } from './context/BudgetContext';
+import { TotalBudgetCard } from './components/TotalBudgetCard/TotalBudgetCard';
+import { UnCategorizeBudgetCard } from './components/UnCategorizeBudgetCard/UnCategorizeBudgetCard';
+import { ViewExpencesModal } from './components/ViewExpencesModal/ViewExpencesModal';
 
 function App() {
-  const [showAddBudgetModal, setShowAddBudgetModal] = useState()
   const [show, setShow] = useState(false);
-  const { budgets, expenses } = useBudget()
+  const [expenseModal, setExpenseModal] = useState(false);
+  const [viewExpenseModal, setViewExpenseModal] = useState();
+  const [viewExpensesModalBudgetId, setViewExpensesModalBudgetId] = useState()
+  const [addExpenseModalBudgetId, setAddExpenseModalBudgetId] = useState(false);
+  const { budgets, getBudgetExpenses } = useBudget()
   const handleClose = () => setShow(false);
-  const openAddExpenseModal = () => { }
+  const handleClose2 = () => setExpenseModal(false);
+
+  const openAddExpenseModal = (budgetId) => {
+    setExpenseModal(true)
+    setAddExpenseModalBudgetId(budgetId)
+  }
   return (
     <Container className='my-4'>
-      <Header />
       <Stack direction="horizontal" gap="2" className="mb-4">
         <h1 className="me-auto">Budgets</h1>
         <Button variant="primary" onClick={() => setShow(true)}>
@@ -26,17 +35,34 @@ function App() {
         </Button>
       </Stack>
       {budgets.map((budget) => {
-        // const amount = getBudgetExpenses(budget.id).reduce((total, expenses))
-        // console.log(amount);
+        const amount = getBudgetExpenses(budget.id).reduce((total, expense) => total + expense.amount, 0)
         return (
-          <BudgetCard name={budget.id} amount={budget.amount} max={budget.max} gray />
+          <BudgetCard
+            key={budget.id}
+            name={budget.name}
+            amount={amount}
+            max={budget.max}
+            gray
+            onViewExpensesClick={() =>
+              setViewExpensesModalBudgetId(budget.id)
+            }
+            onAddExpenseClick={() => openAddExpenseModal(budget.id)}
+          />
         )
       }
       )}
-      <AddExpenseModel show={show}
-        handleClose={handleClose} />
+      <UnCategorizeBudgetCard
+        onAddExpenseClick={() => openAddExpenseModal}
+        onViewExpensesClick={() => setViewExpensesModalBudgetId(UNCATEGORIZED_BUDGET_ID)} />
+      <TotalBudgetCard />
+      <AddExpenseModel show={expenseModal}
+        defaultBudgetId={addExpenseModalBudgetId}
+        handleClose={handleClose2} />
       <AddBudgetModal show={show}
         handleClose={handleClose} />
+      <ViewExpencesModal
+        budgetId={viewExpensesModalBudgetId}
+        handleClose={() => setViewExpenseModal()} />
     </Container>
   );
 }

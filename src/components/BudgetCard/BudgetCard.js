@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import { Button, Card, ProgressBar, Stack } from "react-bootstrap";
 import { currencyFormatter } from "../../utils";
-export const BudgetCard = ({ name, amount, max, gray }) => {
-    const className = []
+export const BudgetCard = ({ hideButtons, name, amount, max, gray, onViewExpensesClick, onAddExpenseClick }) => {
+   
+    const classNames = []
     if (amount > max) {
-        className.push("bg-danger", "bg-opacity-10")
+        classNames.push("bg-danger", "bg-opacity-10")
+    } else if (gray) {
+        classNames.push("bg-light")
     }
-    else if (gray) {
-        className.push("bg-light")
-    }
-    // const [showAddBudgetModal, setShowAddBudgetModal] = useState();
+
     const getVarientColor = (amount, max) => {
         const ratio = amount / max
-        console.log(ratio);
         if (ratio < 0.5) return "primary"
         if (ratio < 0.75) return "warning"
         return "danger"
     }
+
     return (
-        <Card className={className.join(" ")}>
+        <Card className={classNames.join(" ")}>
             <Card.Body>
                 <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
                     <div className="me-2">
@@ -26,22 +26,23 @@ export const BudgetCard = ({ name, amount, max, gray }) => {
                     </div>
                     <div className="d-flex align-items-baseline">
                         {currencyFormatter.format(amount)}
-                        <span className="text-muted fs-6 ms-1">
+                        {max && <span className="text-muted fs-6 ms-1">
                             / {currencyFormatter.format(max)}
-                        </span>
+                        </span>}
                     </div>
                 </Card.Title>
-                <ProgressBar
+                {max && <ProgressBar
                     className="rounded-pill"
                     now={60}
                     min={0}
                     max={max}
                     variant={getVarientColor(amount, max)}
-                />
-                <Stack direction="horizontal" gap="2" className="mt-4">
-                    <Button variant="outline-primary">Add Expenses </Button>
-                    <Button variant="outline-secondary">View Expenses </Button>
+                />}
+                {!hideButtons && <Stack direction="horizontal" gap="2" className="mt-4">
+                    <Button variant="outline-primary" onClick={onAddExpenseClick}>Add Expenses </Button>
+                    <Button variant="outline-secondary" onClick={onViewExpensesClick}>View Expenses </Button>
                 </Stack>
+                }
             </Card.Body>
         </Card >
     );
